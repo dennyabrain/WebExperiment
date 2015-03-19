@@ -1,0 +1,5 @@
+todo after 19th March,2015
+
+update frequency depending on position of the images
+use bezeir curve to connect the two images
+add text to explain
