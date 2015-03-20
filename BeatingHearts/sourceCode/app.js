@@ -4,8 +4,9 @@ window.onload = function(){
 	var width = canvas.width = window.innerWidth;
 	var height = canvas.height = window.innerHeight;
 
-	var frequency = 220;
-	
+	var compressor = new Tone.Compressor(24,12);
+	compressor.toMaster();
+
 	var mouse = {
 		x : 0,
 		y : 0,
@@ -20,14 +21,16 @@ window.onload = function(){
 			x : 0,
 			y : 0
 		},
-		synth : new Tone.AMSynth(),
-		frequency : 220,
+		synth : new Tone.Oscillator(220,'sine'),
+		frequency : 0,
 		init : function(){
 			this.image.src = 'data/girl.png';
 			this.leftNipple.x = this.x+144;
 			this.leftNipple.y = this.y+89;
-			this.synth.toMaster();
-			this.synth.triggerAttack(this.frequency);
+			//this.synth.toMaster();
+			this.synth.connect(compressor);
+			this.frequency = 220 + (this.x/width)*10;
+			this.synth.start();
 		},
 		updateNipple : function(x,y){
 			this.leftNipple.x = x+144;
@@ -43,7 +46,8 @@ window.onload = function(){
 			}
 		},
 		updateFrequency : function(){
-			this.frequency = this.frequency+ this.x/100;
+			this.frequency = 220+(this.x/width)*10;
+			this.synth.frequency.value = this.frequency;
 		}
 	};
 
@@ -55,14 +59,16 @@ window.onload = function(){
 			x : 0,
 			y : 0
 		},
-		synth : new Tone.AMSynth(),
-		frequency : 230,
+		synth : new Tone.Oscillator(220,'sine'),
+		frequency : 0,
 		init : function(){
 			this.image.src = 'data/boy.png';
 			this.rightNipple.x = this.x+88;
 			this.rightNipple.y = this.y+105;
-			this.synth.toMaster();
-			this.synth.triggerAttack(this.frequency);
+			//this.synth.toMaster();
+			this.synth.connect(compressor);
+			this.frequency = 220 + (this.x/width)*10;
+			this.synth.start();
 		},
 		updateNipple : function(x,y){
 			this.rightNipple.x = x+88;
@@ -78,7 +84,8 @@ window.onload = function(){
 			}
 		},
 		updateFrequency : function(){
-			this.frequency += this.x/1000;
+			this.frequency = 220+(this.x/width)*10;
+			this.synth.frequency.value = this.frequency;
 		}
 	};
 	
@@ -99,8 +106,8 @@ window.onload = function(){
 			//context.fillRect(boy.rightNipple.x,boy.rightNipple.y,10,10);
 
 			context.moveTo(girl.leftNipple.x, girl.leftNipple.y);
-			context.lineTo(boy.rightNipple.x, boy.rightNipple.y);
-			
+         	context.bezierCurveTo(girl.leftNipple.x, girl.leftNipple.y+20, boy.rightNipple.x, boy.rightNipple.y+20, boy.rightNipple.x, boy.rightNipple.y);
+		
 			context.strokeStyle = "#F00";	
 			context.stroke();
 		}
@@ -134,6 +141,10 @@ window.onload = function(){
 	}
 	});
 
+	/*map = function(val){
+			return val/width * 10;
+	}*/
+
 	reDrawCanvas = function(){
 		context.fillStyle = '#fff';
 		context.fillRect(0,0,canvas.width,canvas.height);
@@ -146,7 +157,8 @@ window.onload = function(){
 
 		context.beginPath();
 		context.moveTo(girl.leftNipple.x, girl.leftNipple.y);
-		context.lineTo(boy.rightNipple.x, boy.rightNipple.y);
+		//context.lineTo(boy.rightNipple.x, boy.rightNipple.y);
+		context.bezierCurveTo(girl.leftNipple.x, girl.leftNipple.y+20, boy.rightNipple.x, boy.rightNipple.y+20, boy.rightNipple.x, boy.rightNipple.y);
 		context.strokeStyle = '#F00';
 		context.stroke();
 	};
